@@ -57,9 +57,14 @@ Ensure you have all required environment variables set up:
    - Vercel will automatically deploy on push to main branch
    - Get your production URL from Vercel dashboard
 
-5. **Update Supabase**
-   - Add your Vercel URL to Supabase Auth → URL Configuration
-   - Update redirect URLs to include your production domain
+5. **Update Supabase Redirect URLs**
+   - Go to Supabase Dashboard → Authentication → URL Configuration
+   - In the **Redirect URLs** section, add:
+     - `https://your-vercel-app.vercel.app/api/auth/callback`
+     - `https://yourdomain.com/api/auth/callback` (if you have a custom domain)
+   - Keep the localhost URL for development:
+     - `http://localhost:3000/api/auth/callback`
+   - **Important:** The redirect URL must match EXACTLY, including the protocol (http/https)
 
 ### Option 2: Deploy to Other Platforms
 
@@ -173,7 +178,9 @@ docker run -p 3000:3000 --env-file .env.local qa-detector
    - View scan results
 
 3. **Test Widget**
+
    - Create a test HTML file:
+
    ```html
    <!DOCTYPE html>
    <html>

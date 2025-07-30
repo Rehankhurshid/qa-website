@@ -1,6 +1,24 @@
 import { Page } from 'puppeteer'
 import axe from 'axe-core'
-import validateHtml from 'html-validator'
+
+// Using require for html-validator due to TypeScript declaration issues
+const validateHtml = require('html-validator') as (options: {
+  data?: string
+  url?: string
+  format?: 'json' | 'html' | 'xhtml' | 'xml' | 'gnu' | 'text'
+  validator?: string
+  ignore?: string | string[]
+  isLocal?: boolean
+  isFragment?: boolean
+}) => Promise<{
+  messages: Array<{
+    type: 'error' | 'warning' | 'info'
+    message: string
+    extract?: string
+    hiliteStart?: number
+    hiliteLength?: number
+  }>
+}>
 
 interface AccessibilityResult {
   issues: Array<{
