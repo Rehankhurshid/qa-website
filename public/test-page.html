@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Detector Widget Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        img {
+            max-width: 300px;
+            margin: 10px 0;
+        }
+        .example-section {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            background: #f5f5f5;
+        }
+        .broken-link {
+            color: red;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>QA Detector Widget Test Page</h1>
+    
+    <p>This is a test page to verify the QA Detector widget functionality. It contains various elements to test different QA checks.</p>
+    
+    <div class="example-section">
+        <h2>Images Section</h2>
+        <p>Below are images with and without alt text:</p>
+        
+        <!-- Image with alt text -->
+        <img src="https://via.placeholder.com/300x200/0000FF/FFFFFF?text=Good+Image" alt="This is a properly described blue placeholder image">
+        
+        <!-- Image without alt text -->
+        <img src="https://via.placeholder.com/300x200/FF0000/FFFFFF?text=Bad+Image">
+        
+        <!-- Image with empty alt text -->
+        <img src="https://via.placeholder.com/300x200/00FF00/FFFFFF?text=Empty+Alt" alt="">
+    </div>
+    
+    <div class="example-section">
+        <h2>Links Section</h2>
+        <p>Testing various link scenarios:</p>
+        
+        <!-- Good link -->
+        <a href="https://www.google.com">Visit Google</a><br>
+        
+        <!-- Empty href -->
+        <a href="">Empty Link</a><br>
+        
+        <!-- Hash only link -->
+        <a href="#">Hash Only Link</a><br>
+        
+        <!-- Link with no text -->
+        <a href="https://www.example.com"></a><br>
+    </div>
+    
+    <div class="example-section">
+        <h2>Spelling Errors Section</h2>
+        <p>This section intentionaly contains speling erors to test the AI spell checker. The widget shoud detect these misspeled words and sugest corrections.</p>
+        
+        <p>More text with deliberat mistaks: The quik brown fox jumps ovr the lazy dog. Ther are many intresting things to lern about programing.</p>
+    </div>
+    
+    <div class="example-section">
+        <h3>Heading Hierarchy Issues</h3>
+        <h5>This H5 follows an H3, skipping H4</h5>
+        <p>The above heading hierarchy is incorrect and should be detected.</p>
+    </div>
+    
+    <div class="example-section" style="background: #e3f2fd;">
+        <h2>Setup Instructions:</h2>
+        <ol>
+            <li>Start the development server: <code>cd qa-detector && npm run dev</code></li>
+            <li>Visit <a href="http://localhost:3000">http://localhost:3000</a> and sign in with an @activeset.co email</li>
+            <li>Create a new project in the dashboard</li>
+            <li>Copy the embed token from the project</li>
+            <li>Replace <code>YOUR_TOKEN_HERE</code> in the script tag below with your actual token</li>
+            <li>Open this HTML file in a browser (double-click or use <code>open test-page.html</code>)</li>
+        </ol>
+        <p><strong>Expected Results:</strong> The widget should detect:</p>
+        <ul>
+            <li>2 images missing alt text</li>
+            <li>Multiple spelling errors</li>
+            <li>HTML structure issues (heading hierarchy)</li>
+            <li>Empty links</li>
+        </ul>
+    </div>
+    
+    <!-- Embed the QA Detector Widget -->
+    <!-- Replace YOUR_TOKEN_HERE with an actual token from your dashboard -->
+    <script src="http://localhost:3000/widget.js" data-token="YOUR_TOKEN_HERE"></script>
+</body>
+</html>
