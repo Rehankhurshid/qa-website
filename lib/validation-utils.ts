@@ -1,6 +1,6 @@
 import { Page } from 'puppeteer'
 import axe from 'axe-core'
-import * as htmlValidator from 'html-validator'
+import validateHtml from 'html-validator'
 
 interface AccessibilityResult {
   issues: Array<{
@@ -121,10 +121,10 @@ export async function checkHTML(html: string): Promise<HTMLResult> {
   try {
     const options = {
       data: html,
-      format: 'json'
+      format: 'json' as const
     }
     
-    const result = await htmlValidator.validateHtml(options)
+    const result = await validateHtml(options)
     
     const errors: string[] = []
     const warnings: string[] = []

@@ -6,9 +6,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { createClient } from "@/lib/supabase-client"
-import { useState } from "react"
+import { useState, Suspense } from "react"
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams()
   const error = searchParams.get("error")
   const message = searchParams.get("message")
@@ -95,5 +95,13 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   )
 }
