@@ -19,7 +19,7 @@ declare module 'html-validator' {
     }>
   }
 
-  function validateHtml(options: ValidationOptions): Promise<ValidationResult>
+  const validateHtml: (options: ValidationOptions) => Promise<ValidationResult>
   
-  export = validateHtml
+  export default validateHtml
 }

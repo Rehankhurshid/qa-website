@@ -4,7 +4,7 @@
   // Configuration
   const WIDGET_ID = "qa-detector-widget";
   const SESSION_KEY = "qa-detector-session";
-  const API_BASE = window.location.origin;
+  const API_BASE = document.currentScript.src.replace(/\/widget\.js.*$/, "");
   const token = document.currentScript.getAttribute("data-token");
   const DEBUG = window.QA_DETECTOR_DEBUG || false;
 
