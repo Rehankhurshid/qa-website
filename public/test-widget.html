@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Detector Widget Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .debug-info {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .button:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>QA Detector Widget Test Page</h1>
+    
+    <div class="debug-info">
+        <h2>Widget Status</h2>
+        <p>Script Loading: <span id="script-status" class="status">Checking...</span></p>
+        <p>Widget Initialized: <span id="widget-status" class="status">Checking...</span></p>
+        <p>Widget Container: <span id="container-status" class="status">Checking...</span></p>
+        <p>Widget Button: <span id="button-status" class="status">Checking...</span></p>
+    </div>
+
+    <h2>Test Content</h2>
+    <p>This is a test page with some content that can be scanned for QA issues.</p>
+    
+    <img src="https://via.placeholder.com/400x200" alt="">
+    <p>The image above is missing alt text (intentionally for testing).</p>
+    
+    <p>Here's a paragraph with a speling error to test the spell checker.</p>
+    
+    <a href="https://example.com">Test Link</a>
+    
+    <button class="button" onclick="runDebug()">Run Debug Check</button>
+    <button class="button" onclick="forceShowWidget()">Force Show Widget</button>
+    
+    <div class="debug-info">
+        <h3>Debug Console</h3>
+        <pre id="debug-console">Debug output will appear here...</pre>
+    </div>
+
+    <!-- ActiveSet Widget -->
+    <script src="https://qa-detector.vercel.app/widget.js" data-token="7cd92383-1b0b-4da2-bc7b-f8571658533e"></script>
+    
+    <!-- Debug Script -->
+    <script>
+        // Enable debug mode
+        window.QA_DETECTOR_DEBUG = true;
+        
+        function updateStatus() {
+            const debugConsole = document.getElementById('debug-console');
+            let debug = [];
+            
+            // Check script
+            const script = document.querySelector('script[src*="widget.js"]');
+            const scriptStatus = document.getElementById('script-status');
+            if (script) {
+                scriptStatus.textContent = 'Loaded';
+                scriptStatus.className = 'status success';
+                debug.push('✓ Widget script found');
+                debug.push(`  Source: ${script.src}`);
+                debug.push(`  Token: ${script.getAttribute('data-token')}`);
+            } else {
+                scriptStatus.textContent = 'Not Found';
+                scriptStatus.className = 'status error';
+                debug.push('✗ Widget script not found');
+            }
+            
+            // Check widget object
+            const widgetStatus = document.getElementById('widget-status');
+            if (window.QADetectorWidget) {
+                widgetStatus.textContent = 'Yes';
+                widgetStatus.className = 'status success';
+                debug.push('✓ QADetectorWidget object exists');
+            } else {
+                widgetStatus.textContent = 'No';
+                widgetStatus.className = 'status error';
+                debug.push('✗ QADetectorWidget object not found');
+            }
+            
+            // Check container
+            const container = document.getElementById('qa-detector-widget');
+            const containerStatus = document.getElementById('container-status');
+            if (container) {
+                containerStatus.textContent = 'Found';
+                containerStatus.className = 'status success';
+                debug.push('✓ Widget container found');
+            } else {
+                containerStatus.textContent = 'Not Found';
+                containerStatus.className = 'status error';
+                debug.push('✗ Widget container not found');
+            }
+            
+            // Check button
+            const button = document.querySelector('.qa-trigger-button');
+            const buttonStatus = document.getElementById('button-status');
+            if (button) {
+                buttonStatus.textContent = 'Found';
+                buttonStatus.className = 'status success';
+                debug.push('✓ Widget button found');
+                debug.push(`  Visible: ${button.offsetParent !== null}`);
+                debug.push(`  Position: bottom ${button.style.bottom || '20px'}, right ${button.style.right || '20px'}`);
+            } else {
+                buttonStatus.textContent = 'Not Found';
+                buttonStatus.className = 'status error';
+                debug.push('✗ Widget button not found');
+            }
+            
+            debugConsole.textContent = debug.join('\n');
+        }
+        
+        function runDebug() {
+            updateStatus();
+            
+            // Check console for errors
+            console.log('=== QA Detector Debug ===');
+            console.log('Script:', document.querySelector('script[src*="widget.js"]'));
+            console.log('Widget Object:', window.QADetectorWidget);
+            console.log('Container:', document.getElementById('qa-detector-widget'));
+            console.log('Button:', document.querySelector('.qa-trigger-button'));
+        }
+        
+        function forceShowWidget() {
+            const button = document.querySelector('.qa-trigger-button');
+            if (button) {
+                button.style.display = 'block';
+                button.style.visibility = 'visible';
+                button.style.position = 'fixed';
+                button.style.bottom = '20px';
+                button.style.right = '20px';
+                button.style.zIndex = '999999';
+                console.log('Widget button forced visible');
+                updateStatus();
+            } else {
+                console.log('Widget button not found');
+            }
+        }
+        
+        // Initial check after page load
+        window.addEventListener('load', function() {
+            setTimeout(updateStatus, 2000);
+        });
+        
+        // Check every 5 seconds
+        setInterval(updateStatus, 5000);
+    </script>
+</body>
+</html>
