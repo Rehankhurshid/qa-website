@@ -16,12 +16,14 @@ import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
 import { createClient } from "@/lib/supabase-client"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 interface CreateProjectDialogProps {
   userId: string
 }
 
 export function CreateProjectDialog({ userId }: CreateProjectDialogProps) {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -43,6 +45,16 @@ export function CreateProjectDialog({ userId }: CreateProjectDialogProps) {
       // Generate a secure random token
       const embedToken = crypto.randomUUID().replace(/-/g, '') + crypto.randomUUID().replace(/-/g, '')
       const supabase = createClient()
+      
+      // First check if we have a valid session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      
+      if (sessionError || !session) {
+        console.error("No valid session found:", sessionError)
+        toast.error("Your session has expired. Please sign in again.")
+        router.push("/login")
+        return
+      }
       
       console.log("Creating project with data:", {
         user_id: userId,
@@ -89,6 +101,12 @@ export function CreateProjectDialog({ userId }: CreateProjectDialogProps) {
         errorMessage = error.hint
       } else if (error?.code === 'PGRST301') {
         errorMessage = "Authentication required. Please sign in first."
+        router.push("/login")
+      } else if (error?.code === '23503') {
+        errorMessage = "Database error: Invalid user reference. Please sign in again."
+        router.push("/login")
+      } else if (error?.code === '42501') {
+        errorMessage = "Permission denied. Please check your database permissions."
       } else if (error?.code) {
         errorMessage = `Database error: ${error.code}`
       } else if (typeof error === 'string') {
@@ -96,7 +114,9 @@ export function CreateProjectDialog({ userId }: CreateProjectDialogProps) {
       } else if (error && typeof error === 'object') {
         // Try to stringify the error object for debugging
         try {
-          errorMessage = JSON.stringify(error)
+          const errorStr = JSON.stringify(error, null, 2)
+          console.error("Full error object:", errorStr)
+          errorMessage = errorStr.length > 100 ? "Unknown error occurred (check console)" : errorStr
         } catch {
           errorMessage = "Unknown error occurred"
         }

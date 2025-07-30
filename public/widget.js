@@ -6,9 +6,24 @@
   const SESSION_KEY = "qa-detector-session";
   const API_BASE = window.location.origin;
   const token = document.currentScript.getAttribute("data-token");
+  const DEBUG = window.QA_DETECTOR_DEBUG || false;
 
-  if (!token) {
-    console.error("QA Detector: Token is required");
+  if (DEBUG) {
+    console.log("QA Detector: Initializing widget...");
+    console.log("QA Detector: API Base:", API_BASE);
+    console.log(
+      "QA Detector: Token:",
+      token ? `${token.substring(0, 10)}...` : "NOT PROVIDED"
+    );
+  }
+
+  if (!token || token === "YOUR_TOKEN_HERE") {
+    console.error(
+      "QA Detector: Token is required. Please replace 'YOUR_TOKEN_HERE' with your actual project token."
+    );
+    console.error(
+      "To get a token: 1) Sign in to your QA Detector dashboard, 2) Create a project, 3) Copy the embed token"
+    );
     return;
   }
 
@@ -258,14 +273,28 @@
   // Verify token with backend
   async function verifyToken() {
     try {
+      if (DEBUG) console.log("QA Detector: Verifying token...");
+
       const response = await fetch(`${API_BASE}/api/verify-token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token }),
       });
 
+      if (DEBUG) {
+        console.log(
+          "QA Detector: Token verification response:",
+          response.status
+        );
+        if (!response.ok) {
+          const text = await response.text();
+          console.error("QA Detector: Token verification failed:", text);
+        }
+      }
+
       return response.ok;
-    } catch {
+    } catch (error) {
+      if (DEBUG) console.error("QA Detector: Token verification error:", error);
       return false;
     }
   }
@@ -553,18 +582,29 @@
 
   // Initialize
   async function init() {
+    if (DEBUG) console.log("QA Detector: Starting initialization...");
+
     // Verify token first
     const isValidToken = await verifyToken();
     if (!isValidToken) {
-      console.error("QA Detector: Invalid token");
+      console.error("QA Detector: Invalid token. Please check:");
+      console.error("1. Your development server is running (npm run dev)");
+      console.error(
+        "2. The token matches one from your projects in the database"
+      );
+      console.error("3. The API endpoint is accessible");
       return;
     }
 
+    if (DEBUG) console.log("QA Detector: Token verified successfully");
+
     // Check authentication
     const isAuthenticated = await checkUserAuth();
+    if (DEBUG) console.log("QA Detector: User authenticated:", isAuthenticated);
 
     // Create widget
     createWidget(isAuthenticated);
+    if (DEBUG) console.log("QA Detector: Widget created successfully");
   }
 
   // Start when DOM is ready
